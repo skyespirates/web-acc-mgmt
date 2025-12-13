@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react";
-import { Container, Row, Col, Nav } from "react-bootstrap";
+import { Container, Row, Col, Nav, Button } from "react-bootstrap";
 import { useJwt } from "../hooks/useJwt";
+import { useQuery } from "@tanstack/react-query";
+import { getMenu } from "../api/api";
+import { useNavigate } from "react-router";
+import MenuForm from "../components/MenuForm";
 
 // ===== Types =====
 export interface Menu {
@@ -42,7 +45,12 @@ function MenuItem({ menu, level = 0 }: { menu: Menu; level?: number }) {
   return (
     <>
       <Nav.Item style={{ paddingLeft: level * 16 }}>
-        <Nav.Link href={menu.url || "#"}>{menu.name}</Nav.Link>
+        <Nav.Link href={menu.url || "#"}>
+          <u>
+            <span className="text-underline">{menu.menu_id}</span>
+          </u>{" "}
+          {menu.name}
+        </Nav.Link>
       </Nav.Item>
 
       {hasChildren &&
@@ -57,56 +65,36 @@ function MenuItem({ menu, level = 0 }: { menu: Menu; level?: number }) {
 
 // ===== Homepage =====
 export default function HomePage() {
-  const [menus, setMenus] = useState<Menu[]>([]);
-  const { isAuthenticated, user } = useJwt();
+  const { isAuthenticated, user, token, clearToken } = useJwt();
+  const { isError, isPending, isSuccess, error, data } = useQuery({
+    queryKey: ["menus"],
+    queryFn: () => {
+      return getMenu(token!);
+    },
+  });
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    // Example: data normally fetched from API
-    const flatMenus: Menu[] = [
-      {
-        menu_id: 1,
-        name: "Dashboard",
-        parent_id: null,
-        url: "/",
-        sort_order: 1,
-      },
-      { menu_id: 2, name: "Users", parent_id: null, url: "#", sort_order: 2 },
-      {
-        menu_id: 3,
-        name: "User List",
-        parent_id: 2,
-        url: "/users",
-        sort_order: 1,
-      },
-      {
-        menu_id: 4,
-        name: "User Roles",
-        parent_id: 2,
-        url: "/roles",
-        sort_order: 2,
-      },
-      {
-        menu_id: 5,
-        name: "Settings",
-        parent_id: 4,
-        url: "/roles/settings",
-        sort_order: 1,
-      },
-    ];
-
-    setMenus(buildMenuTree(flatMenus));
-  }, []);
+  function handleLogout() {
+    clearToken();
+    navigate("/login");
+  }
 
   return (
     <Container fluid>
       <Row>
         <Col md={3} className="border-end min-vh-100 p-3">
           <h5 className="mb-3">Menu</h5>
-          <Nav className="flex-column">
-            {menus.map((menu) => (
-              <MenuItem key={menu.menu_id} menu={menu} />
-            ))}
-          </Nav>
+          {isPending && <p>menu is loading</p>}
+          {isError && <p>error: {error.message}</p>}
+          {isSuccess && data ? (
+            <Nav className="flex-column">
+              {data.map((menu: Menu) => {
+                return <MenuItem key={menu.menu_id} menu={menu} />;
+              })}
+            </Nav>
+          ) : (
+            <p>Unauthenticated!</p>
+          )}
         </Col>
 
         <Col md={9} className="p-4">
@@ -120,6 +108,12 @@ export default function HomePage() {
               </div>
             )}
           </div>
+          {isAuthenticated && (
+            <Button onClick={handleLogout} className="">
+              Logout
+            </Button>
+          )}
+          <MenuForm />
         </Col>
       </Row>
     </Container>

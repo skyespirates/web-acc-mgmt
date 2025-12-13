@@ -84,7 +84,7 @@ export default function Login() {
                 <Form.Group className="mb-3" controlId="formUsername">
                   <Form.Label>Username </Form.Label>
                   <Form.Control
-                    type="username"
+                    type="text"
                     placeholder="Enter username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
