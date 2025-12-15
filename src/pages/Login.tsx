@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 import type { AxiosError } from "axios";
 import { RoleSelectModal, type Role } from "../components/RoleModal";
@@ -70,6 +70,12 @@ export default function Login() {
     }
   };
 
+  useEffect(() => {
+    if (isSuccess && !data?.roles) {
+      navigate("/");
+    }
+  }, [isSuccess, data, navigate]);
+
   return (
     <Container
       className="d-flex justify-content-center align-items-center flex-column"
@@ -113,36 +119,20 @@ export default function Login() {
       </Row>
       <Row className="w-100 justify-content-center">
         <Col md={4}>
-          <Card className="shadow-sm">
-            <Card.Body>
-              {isPending ? (
-                "Login processing"
-              ) : (
-                <>
-                  {isError ? (
-                    <>
-                      <h1>error</h1>
-                      <pre>cause: {JSON.stringify(error.cause)}</pre>
-                      <pre>data: {JSON.stringify(error?.response?.data)}</pre>
-                    </>
-                  ) : null}
-
-                  {isSuccess ? (
-                    !data.roles ? (
-                      navigate("/")
-                    ) : (
-                      <RoleSelectModal
-                        show={true}
-                        roles={data.roles!}
-                        onSelect={handleSelect}
-                        onClose={() => {}}
-                      />
-                    )
-                  ) : null}
-                </>
-              )}
-            </Card.Body>
-          </Card>
+          {isPending && <p className="text-center">Signing you in...</p>}
+          {isError && (
+            <p className="text-center text-danger">
+              {error?.response?.data.message}
+            </p>
+          )}
+          {isSuccess && data?.roles && (
+            <RoleSelectModal
+              show={true}
+              roles={data.roles}
+              onSelect={handleSelect}
+              onClose={() => {}}
+            />
+          )}
         </Col>
       </Row>
     </Container>

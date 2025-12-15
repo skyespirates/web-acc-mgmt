@@ -6,26 +6,17 @@ import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-const queryClient = new QueryClient();
-
-import { createBrowserRouter, RouterProvider } from "react-router";
-
-import Register from "./pages/Register.tsx";
-import Login from "./pages/Login.tsx";
-import Homepage from "./pages/Homepage.tsx";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    Component: Homepage,
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
   },
-  { path: "/register", Component: Register },
-  {
-    path: "/login",
-    Component: Login,
-  },
-]);
+});
 
+import { RouterProvider } from "react-router";
+
+import { router } from "./routes.ts";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
