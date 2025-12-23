@@ -8,6 +8,7 @@ import client from "../utils/axios";
 import { useJwt } from "../hooks/useJwt";
 import { login } from "../api/api";
 import { useNavigate } from "react-router";
+import LoginMethod from "../components/LoginMethod";
 
 export interface LoginPayload {
   username: string;
@@ -86,7 +87,7 @@ export default function Login() {
           <Card className="shadow-sm">
             <Card.Body>
               <h3 className="text-center mb-4">Login</h3>
-              <Form onSubmit={handleSubmit}>
+              <Form onSubmit={handleSubmit} className="mb-3">
                 <Form.Group className="mb-3" controlId="formUsername">
                   <Form.Label>Username </Form.Label>
                   <Form.Control
@@ -113,6 +114,7 @@ export default function Login() {
                   Login
                 </Button>
               </Form>
+              <LoginMethod />
             </Card.Body>
           </Card>
         </Col>

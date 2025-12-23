@@ -1,0 +1,11 @@
+.top {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  overflow-y: scroll;
+}
+
+.top::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}

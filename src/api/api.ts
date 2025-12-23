@@ -113,3 +113,8 @@ export async function getUserRoles(): Promise<UserRolesResponse> {
   const response = await client.get<UserRolesResponse>("/roles/user");
   return response.data;
 }
+
+export async function getAllUsers() {
+  const response = await client.get("/users", { withCredentials: true });
+  return response.data;
+}
