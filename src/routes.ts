@@ -10,6 +10,7 @@ import RoleList from "./components/RoleList";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import UserRoles from "./components/UserRoles";
+import Chat from "./pages/Chat";
 
 export const router = createBrowserRouter([
   {
@@ -54,6 +55,10 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     Component: Login,
+  },
+  {
+    path: "/chat",
+    Component: Chat,
   },
 ]);
 

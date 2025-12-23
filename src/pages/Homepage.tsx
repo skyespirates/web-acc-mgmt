@@ -1,4 +1,4 @@
-import { Container, Row, Col, Nav } from "react-bootstrap";
+import { Container, Row, Col, Nav, Button, ButtonGroup } from "react-bootstrap";
 import { useQuery } from "@tanstack/react-query";
 import { getMenu } from "../api/api";
 
@@ -18,9 +18,10 @@ export interface Menu {
 }
 
 export default function HomePage() {
-  const { isError, isPending, isSuccess, error, data } = useQuery({
+  const { isError, isPending, isSuccess, error, data, refetch } = useQuery({
     queryKey: ["menus"],
     queryFn: getMenu,
+    enabled: false,
   });
   const { user } = useJwt();
   return (
@@ -47,21 +48,22 @@ export default function HomePage() {
                 return "";
               }
               return (
-                <Nav.Item key={r.id}>
-                  <Nav.Link>
-                    <NavLink
-                      to={r.path}
-                      className={({ isActive }) =>
-                        isActive ? "text-danger" : ""
-                      }
-                    >
-                      {r.name}
-                    </NavLink>
+                <Nav.Item className="" key={r.id}>
+                  <Nav.Link as={NavLink} to={r.path}>
+                    {r.name}
                   </Nav.Link>
                 </Nav.Item>
               );
             })}
           </Nav>
+          <ButtonGroup size="sm">
+            <Button onClick={() => refetch()}>Get Menu</Button>
+            <Button>
+              <NavLink className="text-white text-decoration-none" to="/chat">
+                Chat
+              </NavLink>
+            </Button>
+          </ButtonGroup>
           <Outlet />
         </Col>
       </Row>
